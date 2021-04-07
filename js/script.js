@@ -32,33 +32,71 @@ P.S. Здесь есть несколько вариантов решения з
 
 'use strict';
 
-const movieDB = {
-    movies: [
-        "Логан",
-        "Лига справедливости",
-        "Ла-ла лэнд",
-        "Одержимость",
-        "Скотт Пилигрим против..."
-    ]
-};
+document.addEventListener('DOMContentLoaded', () => {
+    const movieDB = {
+        movies: [
+            "Логан",
+            "Лига справедливости",
+            "Ла-ла лэнд",
+            "Одержимость",
+            "Скотт Пилигрим против..."
+        ]
+    };
+    
+    const adv = document.querySelectorAll('.promo__adv img'),
+          poster = document.querySelector('.promo__bg'),
+          genre = poster.querySelector('.promo__genre'),
+          movieList = document.querySelector('.promo__interactive-list'),
+          addForm = document.querySelector('form.add'),
+          addInput = addForm.querySelector('.adding__input'),
+          checkBox = addForm.querySelector('[type="checkbox"]');
+    
+    addForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const newFilm = addInput.value;
+        const favorite = checkBox.checked;
 
-// 1)
-const promoAdv = document.getElementsByClassName('promo__adv'),
-    promoContent = document.getElementsByClassName('promo__content');
+        movieDB.movies.push(newFilm);
+        
+        sortArr(movieDB.movies);
+        createMovieList(movieDB.movies, movieList);
+        event.target.reset();
+    })
 
-promoAdv[0].remove();
-promoContent[0].style.cssText = 'width:calc(100% - 300px)';
+    const deleteAdv = (arr) => {
+       arr.forEach(item => {
+            item.remove();
+       });
+    }
+    
 
-// 2)
-promoContent[0].getElementsByClassName('promo__genre')[0].textContent = 'ДРАМА';
+    const makeChanges = () => {
+        genre.textContent = 'драма';
+        poster.style.backgroundImage = 'url("img/bg.jpg")';
+    }
 
-// 3)
-promoContent[0].getElementsByClassName('promo__bg')[0].style.cssText = 'background:url("../img/bg.jpg"';
-// promoContent[0].style.cssText = 'promo__bg{height:360px;background:url("../img/bg.jpg")'
+    function createMovieList(films, parent) {
+        parent.innerHTML = "";
+    
+        sortArr(films);
+        
+        films.forEach((film, i) => {
+            parent.innerHTML += `
+                <li class="promo__interactive-item">${i + 1} ${film}
+                    <div class="delete"></div>
+                </li>
+            `;
+        });
+    }
 
-// 4-5)
-const iList = promoContent[0].getElementsByClassName('promo__interactive-list')[0].getElementsByClassName('promo__interactive-item');
 
-movieDB.movies.sort().forEach((element, index) => {
-    iList[index].textContent = `${index + 1}. ${element}`
-});
+    const sortArr = (arr) => {
+        arr.sort();
+    };
+
+    deleteAdv(adv);
+    makeChanges();
+    sortArr(movieDB.movies);
+    createMovieList(movieDB.movies, movieList);
+
+})
